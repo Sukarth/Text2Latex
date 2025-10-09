@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text2Latex</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 320px;
+            padding: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+            color: #fff;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .toggle-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .toggle-label {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.3);
+            transition: 0.3s;
+            border-radius: 26px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #1e88e5;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        .info-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            opacity: 0.8;
+        }
+
+        .info-value {
+            font-weight: 600;
+        }
+
+        .shortcuts {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .shortcuts h3 {
+            font-size: 14px;
+            margin-bottom: 12px;
+            opacity: 0.9;
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .shortcut-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .shortcut-key {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 11px;
+        }
+
+        .security-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .security-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.locked {
+            background: #ff6b6b;
+        }
+
+        .dot.unlocked {
+            background: #4caf50;
+        }
+
+        .button {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .status.success {
+            color: #4CAF50;
+        }
+
+        .status.error {
+            color: #ff6b6b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Text2Latex</h1>
+        <p>AI-Powered LaTeX Converter</p>
+    </div>
+
+    <div class="toggle-section">
+        <div class="toggle-container">
+            <span class="toggle-label">Extension Enabled</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="enableToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <div class="info-row">
+            <span class="info-label">Provider:</span>
+            <span class="info-value" id="currentProvider">-</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Model:</span>
+            <span class="info-value" id="currentModel">-</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Delay:</span>
+            <span class="info-value" id="currentDelay">-</span>
+        </div>
+    </div>
+
+    <div class="security-section">
+        <div class="security-status">
+            <div>
+                <span class="info-label">Encryption:</span>
+                <span class="info-value" id="encryptionStatusLabel">-</span>
+            </div>
+            <div class="dot locked" id="encryptionStatusDot"></div>
+        </div>
+        <button class="button" id="unlockEncryption">Unlock Encryption</button>
+    </div>
+
+    <!-- <div class="shortcuts">
+        <h3>Keyboard Shortcuts</h3>
+        <div class="shortcut-item">
+            <span>Convert to LaTeX</span>
+            <span class="shortcut-key">Ctrl+Shift+L</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Accept Suggestion</span>
+            <span class="shortcut-key">Ctrl+Shift+A</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Hide Overlay</span>
+            <span class="shortcut-key">Esc</span>
+        </div>
+    </div> -->
+
+    <button class="button" id="openSettings">Open Settings</button>
+
+    <div class="status" id="status"></div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>

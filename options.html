@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text2Latex Settings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+            color: white;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 32px;
+        }
+
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #1565c0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="password"],
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #1565c0;
+        }
+
+        .form-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #1565c0;
+            border: 2px solid #1565c0;
+            border-radius: 4px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .provider-config {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .provider-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .provider-tab {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .provider-tab:hover {
+            border-color: #1565c0;
+        }
+
+        .provider-tab.active {
+            background: #1565c0;
+            color: white;
+            border-color: #1565c0;
+        }
+
+        .provider-panel {
+            display: none;
+        }
+
+        .provider-panel.active {
+            display: block;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .button {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .button-primary {
+            background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+            color: white;
+        }
+
+        .button-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(21, 101, 192, 0.4);
+        }
+
+        .button-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .button-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .status-message {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-message.show {
+            display: block;
+        }
+
+        .range-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .range-group input[type="range"] {
+            flex: 1;
+        }
+
+        .range-value {
+            min-width: 60px;
+            text-align: right;
+            font-weight: 600;
+            color: #1565c0;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #1565c0;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #1565c0;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .model-options {
+            display: grid;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .model-option {
+            padding: 8px 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .model-option:hover {
+            border-color: #1565c0;
+        }
+
+        .model-option.selected {
+            background: #1565c0;
+            color: white;
+            border-color: #1565c0;
+        }
+
+        .security-card {
+            background: #f1f6ff;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid rgba(21, 101, 192, 0.2);
+            margin-bottom: 16px;
+        }
+
+        .security-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .status-indicator {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+
+        .status-indicator.locked {
+            background: #d32f2f;
+        }
+
+        .status-indicator.unlocked {
+            background: #2e7d32;
+        }
+
+        .security-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .security-actions button {
+            flex: 1;
+            min-width: 160px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ Text2Latex Settings</h1>
+            <p>Configure your AI-powered LaTeX converter</p>
+        </div>
+
+        <div class="content">
+            <!-- General Settings -->
+            <div class="section">
+                <h2 class="section-title">General Settings</h2>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="autoConvert">
+                        <label for="autoConvert">Enable automatic conversion</label>
+                    </div>
+                    <p class="help-text">Automatically convert text as you type</p>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="showNotifications">
+                        <label for="showNotifications">Show notifications</label>
+                    </div>
+                    <p class="help-text">Display notifications when LaTeX is applied</p>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="renderPreview">
+                        <label for="renderPreview">Render LaTeX preview in overlay</label>
+                    </div>
+                    <p class="help-text">Show a typeset preview of the generated LaTeX (uses a safe image-based
+                        renderer)</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="delay">Conversion Delay (ms)</label>
+                    <div class="range-group">
+                        <input type="range" id="delay" min="600" max="2000" step="100">
+                        <span class="range-value" id="delayValue">1000ms</span>
+                    </div>
+                    <p class="help-text">Time to wait after typing before converting (only applies when automatic
+                        conversion is enabled)</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="temperature">AI Temperature</label>
+                    <div class="range-group">
+                        <input type="range" id="temperature" min="0" max="1" step="0.1">
+                        <span class="range-value" id="temperatureValue">0.3</span>
+                    </div>
+                    <p class="help-text">Lower = more focused, Higher = more creative</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="maxTokens">Max Tokens</label>
+                    <div class="range-group">
+                        <input type="range" id="maxTokens" min="100" max="2000" step="100">
+                        <span class="range-value" id="maxTokensValue">500</span>
+                    </div>
+                    <p class="help-text">Maximum length of AI response</p>
+                </div>
+            </div>
+
+            <!-- Encryption Settings -->
+            <div class="section">
+                <h2 class="section-title">API Key Security</h2>
+                <div class="security-card">
+                    <div class="security-status">
+                        <div class="status-indicator locked" id="encryptionStatusDot"></div>
+                        <div>
+                            <strong id="encryptionStatusText">Encryption is disabled</strong>
+                            <p class="help-text" id="encryptionStatusHelp">Set a passphrase to encrypt your API keys
+                                locally using AES-256-GCM.</p>
+                        </div>
+                    </div>
+
+                    <div id="encryptionSetupSection" class="form-group">
+                        <label for="encryptionPassphrase">Create passphrase</label>
+                        <input type="password" id="encryptionPassphrase" placeholder="Enter passphrase">
+                        <label for="encryptionPassphraseConfirm" style="margin-top:12px;display:block;">Confirm
+                            passphrase</label>
+                        <input type="password" id="encryptionPassphraseConfirm" placeholder="Confirm passphrase">
+                        <p class="help-text">Passphrase never leaves your device. You'll need it to unlock API keys each
+                            session.</p>
+                        <button class="button button-primary" id="enableEncryptionBtn" style="margin-top:12px;">Enable
+                            Encryption</button>
+                    </div>
+
+                    <div id="encryptionUnlockSection" class="form-group" style="display:none;">
+                        <label for="unlockPassphrase">Unlock with passphrase</label>
+                        <input type="password" id="unlockPassphrase" placeholder="Enter passphrase">
+                        <div class="security-actions" style="margin-top:12px;">
+                            <button class="button button-primary" id="unlockEncryptionBtn">Unlock</button>
+                            <button class="button button-secondary" id="resetEncryptionBtn">Reset Encryption</button>
+                        </div>
+                    </div>
+
+                    <div id="encryptionUnlockedActions" class="security-actions" style="display:none;">
+                        <button class="button button-secondary" id="lockEncryptionBtn">Lock Now</button>
+                        <button class="button button-primary" id="changePassphraseBtn">Change Passphrase</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Provider Settings -->
+            <div class="section">
+                <h2 class="section-title">AI Provider Configuration</h2>
+
+                <div class="provider-tabs">
+                    <div class="provider-tab active" data-provider="openai">OpenAI</div>
+                    <div class="provider-tab" data-provider="anthropic">Anthropic</div>
+                    <div class="provider-tab" data-provider="google">Google</div>
+                    <div class="provider-tab" data-provider="openrouter">OpenRouter</div>
+                </div>
+
+                <div class="provider-config">
+                    <!-- OpenAI Panel -->
+                    <div class="provider-panel active" data-panel="openai">
+                        <div class="form-group">
+                            <label for="openai-api-key">API Key</label>
+                            <input type="password" id="openai-api-key" placeholder="sk-...">
+                            <p class="help-text">Get your API key from platform.openai.com</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="openai-model">Model</label>
+                            <select id="openai-model">
+                                <option value="">No models available - Enter API key first</option>
+                            </select>
+                            <p class="help-text">Enter API key to load available models</p>
+                        </div>
+                    </div>
+
+                    <!-- Anthropic Panel -->
+                    <div class="provider-panel" data-panel="anthropic">
+                        <div class="form-group">
+                            <label for="anthropic-api-key">API Key</label>
+                            <input type="password" id="anthropic-api-key" placeholder="sk-ant-...">
+                            <p class="help-text">Get your API key from console.anthropic.com</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="anthropic-model">Model</label>
+                            <select id="anthropic-model">
+                                <option value="">No models available - Enter API key first</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Google Panel -->
+                    <div class="provider-panel" data-panel="google">
+                        <div class="form-group">
+                            <label for="google-api-key">API Key</label>
+                            <input type="password" id="google-api-key" placeholder="AIza...">
+                            <p class="help-text">Get your API key from makersuite.google.com</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="google-model">Model</label>
+                            <select id="google-model">
+                                <option value="">No models available - Enter API key first</option>
+                            </select>
+                            <p class="help-text">Enter API key to load available models</p>
+                        </div>
+                    </div>
+
+                    <!-- OpenRouter Panel -->
+                    <div class="provider-panel" data-panel="openrouter">
+                        <div class="form-group">
+                            <label for="openrouter-api-key">API Key</label>
+                            <input type="password" id="openrouter-api-key" placeholder="sk-or-...">
+                            <p class="help-text">Get your API key from openrouter.ai</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="openrouter-model">Model</label>
+                            <select id="openrouter-model">
+                                <option value="">No models available - Enter API key first</option>
+                            </select>
+                            <p class="help-text">Enter API key to load available models</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label for="activeProvider">Active Provider</label>
+                    <select id="activeProvider">
+                        <option value="openai">OpenAI</option>
+                        <option value="anthropic">Anthropic</option>
+                        <option value="google">Google</option>
+                        <option value="openrouter">OpenRouter</option>
+                    </select>
+                    <p class="help-text">Select which AI provider to use for conversions</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="button-group">
+                <button class="button button-secondary" id="resetBtn">Reset to Defaults</button>
+                <button class="button button-primary" id="saveBtn">Save Settings</button>
+            </div>
+
+            <div class="status-message" id="statusMessage"></div>
+        </div>
+    </div>
+
+    <script src="secure-storage.js"></script>
+    <script src="options.js"></script>
+</body>
+
+</html>
